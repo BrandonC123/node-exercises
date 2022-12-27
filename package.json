@@ -1,0 +1,27 @@
+{
+    "name": "node-exercises-fso",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BrandonC123/node-exercises.git"
+    },
+    "author": "Brandon Chu",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/BrandonC123/node-exercises/issues"
+    },
+    "homepage": "https://github.com/BrandonC123/node-exercises#readme",
+    "dependencies": {
+        "express": "^4.18.2",
+        "node": "^19.3.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.20"
+    }
+}
