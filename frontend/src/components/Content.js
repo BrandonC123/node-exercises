@@ -2,7 +2,6 @@ import React from 'react'
 import Person from './Person'
 
 const Content = ({persons, allPersons, setAllPersons, setMessage}) => {
-  console.log(persons.length)
   if (persons.length === 0) {
     return (
       <ul>

@@ -22,20 +22,19 @@ app.get(`/api/persons`, (request, response) => {
 
 app.get("/info", (request, response) => {
     const date = new Date();
-    response.send(`Phonebook has info for ${entries.length} people <br/>
+    Entry.find({}).then((entries) => {
+        response.send(`Phonebook has info for ${entries.length} people <br/>
     ${date}`);
+    });
 });
 
-app.get("/api/persons/:id", (request, response) => {
-    const id = Number(request.params.id);
-    const index = entries.map(({ id }) => id).indexOf(id);
-
-    if (index !== -1) {
-        response.json(entries[index]);
-        console.log(index);
-    } else {
-        return response.status(404).json({ error: "ID not found" });
-    }
+app.get("/api/persons/:id", (request, response, next) => {
+    const id = request.params.id;
+    Entry.findById(id)
+        .then((entry) => {
+            response.json(entry);
+        })
+        .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -56,6 +55,18 @@ app.post("/api/persons", (request, response) => {
     newEntry.save().then((savedEntry) => {
         response.json(savedEntry);
     });
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+    const id = request.params.id;
+    const newEntry = request.body;
+
+    Entry.findByIdAndUpdate(id, newEntry)
+        .then((updatedEntry) => {
+            response.json(updatedEntry);
+        })
+        .catch((error) => next(error));
+    console.log(newEntry);
 });
 
 const errorHandler = (error, request, response, next) => {

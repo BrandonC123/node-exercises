@@ -1,11 +1,17 @@
-DELETE http://localhost:3001/api/persons/12
+DELETE http://localhost:8080/api/persons/12
 
 ###
 
-POST http://localhost:3001/api/persons
+POST http://localhost:8080/api/persons
 Content-Type: application/json
 
 {
-    "name": "Ada Lovelac",
+    "name": "brandon",
     "number": 18
 }
+
+###
+GET http://localhost:8080/info
+
+###
+DELETE http://localhost:8080/api/persons/63ae6e166dff2990e2078f5a
