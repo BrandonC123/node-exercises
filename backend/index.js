@@ -4,38 +4,20 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 app.use(express.static("build"));
+const Entry = require("./models/entry.js");
+const { nextTick } = require("process");
+require("dotenv").config();
 
-let entries = [
-    {
-        id: 1,
-        name: "Arto Hellas",
-        number: "040-123456",
-    },
-    {
-        id: 2,
-        name: "Ada Lovelace",
-        number: "39-44-5323523",
-    },
-    {
-        id: 3,
-        name: "Dan Abramov",
-        number: "12-43-234345",
-    },
-    {
-        id: 4,
-        name: "Mary Poppendieck",
-        number: "39-23-6423122",
-    },
-];
-
-const API_BASE_URL = "http://localhost:3001/api";
+// const API_BASE_URL = "http://localhost:3001/api";
 
 app.get("/", (request, response) => {
     response.send("<h1>Phone Book Entries Backend</h1>");
 });
 
 app.get(`/api/persons`, (request, response) => {
-    response.json(entries);
+    Entry.find({}).then((entries) => {
+        response.json(entries);
+    });
 });
 
 app.get("/info", (request, response) => {
@@ -56,40 +38,36 @@ app.get("/api/persons/:id", (request, response) => {
     }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-    const id = Number(request.params.id);
-    const index = entries.map(({ id }) => id).indexOf(id);
-    if (index !== -1) {
-        entries.filter((entry) => entry.id !== id);
-        response.status(204).end();
-    } else {
-        return response.status(404).json({ error: "ID not found" });
-    }
+app.delete("/api/persons/:id", (request, response, next) => {
+    const id = request.params.id;
+    Entry.findByIdAndRemove(id)
+        .then(() => {
+            response.status(204).end();
+        })
+        .catch((error) => next(error));
 });
 
 app.post("/api/persons", (request, response) => {
     const body = request.body;
-    console.log(body);
-    const id = Math.round(Math.random() * 10000);
-    const newEntry = {
-        id: id,
+    const newEntry = Entry({
         name: body.name,
         number: body.number,
-    };
-    const index = entries.map(({ name }) => name).indexOf(body.name);
-
-    if (index !== -1) {
-        return response.status(404).json({ error: "name must be unqiue" });
-    } else if (!body.name) {
-        return response.status(404).json({ error: "missing name" });
-    } else if (!body.number) {
-        return response.status(404).json({ error: "missing number" });
-    }
-    entries = entries.concat(newEntry);
-    response.json(newEntry);
+    });
+    newEntry.save().then((savedEntry) => {
+        response.json(savedEntry);
+    });
 });
 
-const PORT = 8080;
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+    if (error.name === "CastError") {
+        return response.status(400).send({ error: "malformatted id" });
+    }
+    next(error);
+};
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
