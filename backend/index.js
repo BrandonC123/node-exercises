@@ -5,7 +5,6 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.static("build"));
 const Entry = require("./models/entry.js");
-const { nextTick } = require("process");
 require("dotenv").config();
 
 // const API_BASE_URL = "http://localhost:3001/api";
@@ -14,7 +13,7 @@ app.get("/", (request, response) => {
     response.send("<h1>Phone Book Entries Backend</h1>");
 });
 
-app.get(`/api/persons`, (request, response) => {
+app.get("/api/persons", (request, response) => {
     Entry.find({}).then((entries) => {
         response.json(entries);
     });
@@ -90,6 +89,7 @@ const errorHandler = (error, request, response, next) => {
 };
 app.use(errorHandler);
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
