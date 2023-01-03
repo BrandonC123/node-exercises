@@ -1,0 +1,12 @@
+GET http://localhost:8080/api/blogs
+
+###
+POST http://localhost:8080/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Tester blog",
+    "author": "Brandon Chu",
+    "url": "google.com",
+    "likes": 12
+}
