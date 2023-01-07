@@ -9,7 +9,7 @@ beforeEach(async () => {
     await apiHelper.initializeDB();
 });
 
-describe("route testing - GET", () => {
+describe("retrieving blogs", () => {
     test("gets all blogs", async () => {
         await api
             .get("/api/blogs")
@@ -22,7 +22,7 @@ describe("route testing - GET", () => {
     });
 });
 
-describe("route testing - POST", () => {
+describe("adding new blog", () => {
     test("a valid blog object is posted", async () => {
         const newBlog = {
             title: "Brandon's new blog",
@@ -63,4 +63,36 @@ describe("route testing - POST", () => {
         };
         await api.post("/api/blogs").send(missingTitle).expect(400);
     });
+});
+
+describe("deleting a blog", () => {
+    test("blog can be deleted", async () => {
+        const allBlogs = await apiHelper.getAllBlogs();
+        const demoId = allBlogs[0]._id;
+        await api.delete(`/api/blogs/${demoId}`).expect(204);
+        const updatedBlogs = await apiHelper.getAllBlogs();
+        expect(updatedBlogs).toHaveLength(allBlogs.length - 1);
+    });
+});
+
+describe("updating a blog", () => {
+    test("blog can be updated", async () => {
+        const allBlogs = await apiHelper.getAllBlogs();
+        const updateId = allBlogs[0]._id;
+        const newData = {
+            title: "Testera",
+            author: "Brandon",
+            url: "google.com",
+        };
+        const resp = await api
+            .put(`/api/blogs/${updateId}`)
+            .send(newData)
+            .expect(200);
+        expect(resp.body.title).toBe(newData.title);
+        expect(resp.body.author).toBe(newData.author);
+    });
+});
+
+afterAll(() => {
+    mongoose.connection.close();
 });

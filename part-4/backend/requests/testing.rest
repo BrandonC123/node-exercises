@@ -10,3 +10,16 @@ Content-Type: application/json
     "url": "google.com",
     "likes": 1
 }
+
+###
+PUT http://localhost:8080/api/blogs/63b371c16f0255d0a7d5c357
+Content-Type: application/json
+
+{
+    "title": "Tester",
+    "author": "Brandon",
+    "url": "google.com"
+}
+
+###
+DELETE http://localhost:8080/api/blogs/63b3b0da60430a46583e18eb
